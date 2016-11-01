@@ -59,7 +59,7 @@ public class AddressBookServiceTest {
 		Person juan = new Person();
 		juan.setName("Juan");
 		URI juanURI = URI.create("http://localhost:8282/contacts/person/1");
-
+git
 		// Create a new user
 		Client client = ClientBuilder.newClient();
 		Response response = client.target("http://localhost:8282/contacts")
@@ -174,7 +174,12 @@ public class AddressBookServiceTest {
 		//////////////////////////////////////////////////////////////////////
 		// Verify that POST is well implemented by the service, i.e
 		// test that it is not safe and not idempotent
-		//////////////////////////////////////////////////////////////////////	
+		//////////////////////////////////////////////////////////////////////
+
+		Response newResponse = client.target("http://localhost:8282/contacts").request.get();
+		assertEquals(response.getStatus(), newResponse.getStatus());
+		AddressBook newAddressBook = newResponse.readEntity(AddressBook.class);
+		assertEquals(addressBook.getPersonList().size(), newAddressBook.getPersonList().size());
 	
 	}
 
