@@ -40,13 +40,19 @@ public class AddressBookServiceTest {
 		Response response = client.target("http://localhost:8282/contacts")
 				.request().get();
 		assertEquals(200, response.getStatus());
-		assertEquals(0, response.readEntity(AddressBook.class).getPersonList()
-				.size());
+        AddressBook addressBook = response.readEntity(AddressBook.class);
+        assertEquals(0, addressBook.getPersonList()
+                .size());
 
 		//////////////////////////////////////////////////////////////////////
 		// Verify that GET /contacts is well implemented by the service, i.e
 		// test that it is safe and idempotent
-		//////////////////////////////////////////////////////////////////////	
+		//////////////////////////////////////////////////////////////////////
+
+		Response newResponse = client.target("http://localhost:8282/contacts").request().get();
+		assertEquals(response.getStatus(), newResponse.getStatus());
+		AddressBook newAddressBook = newResponse.readEntity(AddressBook.class);
+		assertEquals(addressBook.getPersonList().size(), newAddressBook.getPersonList().size());
 	}
 
 	@Test
@@ -59,7 +65,6 @@ public class AddressBookServiceTest {
 		Person juan = new Person();
 		juan.setName("Juan");
 		URI juanURI = URI.create("http://localhost:8282/contacts/person/1");
-git
 		// Create a new user
 		Client client = ClientBuilder.newClient();
 		Response response = client.target("http://localhost:8282/contacts")
@@ -176,10 +181,6 @@ git
 		// test that it is not safe and not idempotent
 		//////////////////////////////////////////////////////////////////////
 
-		Response newResponse = client.target("http://localhost:8282/contacts").request.get();
-		assertEquals(response.getStatus(), newResponse.getStatus());
-		AddressBook newAddressBook = newResponse.readEntity(AddressBook.class);
-		assertEquals(addressBook.getPersonList().size(), newAddressBook.getPersonList().size());
 	
 	}
 
