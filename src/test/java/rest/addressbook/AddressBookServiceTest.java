@@ -210,30 +210,30 @@ public class AddressBookServiceTest {
         Person testecico = new Person();
         testecico.setName("Testecico");
 
-        URI firstTest = URI.create("http://localhost:8282/contacts/person/1");
-        URI secondTest = URI.create("http://localhost:8282/contacts/person/2");
+        URI firstURI = URI.create("http://localhost:8282/contacts/person/1");
+        URI secondURI = URI.create("http://localhost:8282/contacts/person/2");
 
-        Response test = client.target("http://localhost:8282/contacts")
+        Response check = client.target("http://localhost:8282/contacts")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.entity(testecico, MediaType.APPLICATION_JSON));
+                .post(Entity.entity(firstURI, MediaType.APPLICATION_JSON));
+
         //Checking the creation it's done.
-        assertEquals(201,test.getStatus());
-        assertEquals(firstTest,test.getLocation());
+        assertEquals(201, check.getStatus());
+        assertEquals(firstURI, check.getLocation());
         //Checking if the address book has been changed.
-        Response test2 = client.target("http://localhost:8282/contacts")
+        Response get = client.target("http://localhost:8282/contacts")
                 .request(MediaType.APPLICATION_JSON).get();
-        assertEquals(200, test2.getStatus());
-        assertEquals(3,test2.readEntity(AddressBook.class).getPersonList().size());
+        assertEquals(200, get.getStatus());
+        assertEquals(3, get.readEntity(AddressBook.class).getPersonList()
+                .size());
 
-        test = client.target("http:://localhost:8282/contacts")
+        //Checks the second post invoked with the same parameters return a new
+        // resource corresponding to the new person added
+        check = client.target("http://localhost:8282/contacts")
                 .request(MediaType.APPLICATION_JSON)
-                .post(Entity.entity(firstTest, MediaType.APPLICATION_JSON));
-        assertEquals(201, test.getStatus());
-        assertEquals(secondTest, test.getLocation());
-
-
-
-	
+                .post(Entity.entity(firstURI, MediaType.APPLICATION_JSON));
+        assertEquals(201, check.getStatus());
+        assertEquals(secondURI, check.getLocation());
 	}
 
 	@Test
